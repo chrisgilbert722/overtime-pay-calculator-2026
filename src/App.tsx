@@ -7,24 +7,25 @@ import { AdContainer } from './components/AdContainer';
 import { BreakdownTable } from './components/BreakdownTable';
 import { SEOText } from './components/SEOText';
 import { Footer } from './components/Footer';
-import { calculateLoan } from './logic/loanCalculations';
-import type { LoanInput } from './logic/loanCalculations';
+import { calculateOvertime } from './logic/overtimeCalculations';
+import type { OvertimeInput } from './logic/overtimeCalculations';
 
 function App() {
-  const [values, setValues] = useState<LoanInput>({
-    loanAmount: 15000,
-    interestRate: 10,
-    loanTermMonths: 36,
-    originationFee: 3,
-    originationFeePercent: true,
-    paymentFrequency: 'monthly'
+  const [values, setValues] = useState<OvertimeInput>({
+    hourlyRate: 25,
+    regularHours: 40,
+    overtimeHours: 10,
+    state: 'TX',
+    overtimeMultiplier: 1.5,
+    includeDoubleTime: false,
+    doubleTimeHours: 0
   });
 
-  const handleChange = (field: keyof LoanInput, value: number | boolean | string) => {
+  const handleChange = (field: keyof OvertimeInput, value: number | boolean | string) => {
     setValues(prev => ({ ...prev, [field]: value }));
   };
 
-  const result = calculateLoan(values);
+  const result = calculateOvertime(values);
 
   return (
     <>
@@ -37,7 +38,7 @@ function App() {
         <InputCard values={values} onChange={handleChange} />
 
         {/* 3) RESULTS PANEL */}
-        <ResultsPanel result={result} paymentFrequency={values.paymentFrequency} />
+        <ResultsPanel result={result} />
 
         {/* 4) SCENARIO CONTROLS */}
         <ScenarioControls values={values} onChange={handleChange} />
@@ -46,7 +47,7 @@ function App() {
         <AdContainer slotId="native-slot-placeholder" sticky={false} />
 
         {/* 6) BREAKDOWN TABLE */}
-        <BreakdownTable result={result} loanTermMonths={values.loanTermMonths} paymentFrequency={values.paymentFrequency} />
+        <BreakdownTable result={result} includeDoubleTime={values.includeDoubleTime} />
 
         {/* 7) SEO TEXT */}
         <SEOText />
